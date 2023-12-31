@@ -1,7 +1,7 @@
 import { auth, firestore, storage } from "@/firebase/clientApp";
 import useAuthModalStore from "@/store/authModalStore";
 import useCommunitiesStore from "@/store/communitiesStore";
-import { Community } from "@/store/features/communitiesSlice";
+import { Community } from "@/store/communitiesStore";
 import usePostStore, { Post, PostVote } from "@/store/postStore";
 import {
   collection,

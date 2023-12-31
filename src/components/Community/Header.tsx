@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Button, Flex, Icon, Text, Image, Avatar } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
-import { Community } from "@/store/features/communitiesSlice";
+import { Community } from "@/store/communitiesStore";
 import useCommunityData from "@/hooks/useCommunityData";
 import { RedditCommunityFillIcon } from "@/styles/icons";
 
