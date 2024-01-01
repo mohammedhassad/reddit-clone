@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 const usePosts = (communityData?: Community) => {
@@ -178,37 +178,40 @@ const usePosts = (communityData?: Community) => {
       setPosts(postStateValue.posts.filter((item) => item.id !== post.id));
 
       return true;
-    } catch (error) {
-      console.log("THERE WAS AN ERROR", error);
+    } catch (error: any) {
+      console.log("THERE WAS AN ERROR", error.message);
       return false;
     }
   };
 
-  const getCommunityPostVotes = async (communityId: string) => {
-    const postVotesQuery = query(
-      collection(firestore, `users/${user?.uid}/postVotes`),
-      where("communityId", "==", communityId)
-    );
-    const postVoteDocs = await getDocs(postVotesQuery);
-    const postVotes = postVoteDocs.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+  const getCommunityPostVotes = useCallback(
+    async (communityId: string) => {
+      const postVotesQuery = query(
+        collection(firestore, `users/${user?.uid}/postVotes`),
+        where("communityId", "==", communityId)
+      );
+      const postVoteDocs = await getDocs(postVotesQuery);
+      const postVotes = postVoteDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-    setPostVotes(postVotes as PostVote[]);
-  };
+      setPostVotes(postVotes as PostVote[]);
+    },
+    [setPostVotes, user?.uid]
+  );
 
   useEffect(() => {
     if (!user?.uid || !communityStateValue.currentCommunity.id) return;
     getCommunityPostVotes(communityStateValue.currentCommunity.id);
-  }, [user?.uid, communityStateValue.currentCommunity]);
+  }, [user?.uid, communityStateValue.currentCommunity, getCommunityPostVotes]);
 
   useEffect(() => {
     if (!user?.uid) {
       setPostVotes([]);
       return;
     }
-  }, [user?.uid]);
+  }, [user?.uid, setPostVotes]);
 
   return {
     postStateValue,

@@ -37,7 +37,7 @@ const Directory: React.FC<Props> = () => {
           <Flex alignItems="center">
             <Flex alignItems="center" textAlign="start" flexGrow={1}>
               <>
-                {directoryState.selectedMenuItem.imageURL ? (
+                {directoryState?.selectedMenuItem?.imageURL ? (
                   <Image
                     borderRadius="full"
                     boxSize="24px"

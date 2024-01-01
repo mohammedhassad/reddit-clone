@@ -26,7 +26,7 @@ const Icons: React.FC<Props> = () => {
           rounded="md"
           bg="transparent"
           _hover={{
-            bg: "gray.200",
+            bg: "gray.100",
           }}
           aria-label=""
           icon={

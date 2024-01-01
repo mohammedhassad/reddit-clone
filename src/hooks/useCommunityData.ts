@@ -3,6 +3,7 @@ import useAuthModalStore from "@/store/authModalStore";
 import useCommunitiesStore, {
   Community,
   CommunitySnippet,
+  defaultCommunity,
 } from "@/store/communitiesStore";
 import {
   collection,
@@ -13,7 +14,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 const useCommunityData = () => {
@@ -55,8 +56,8 @@ const useCommunityData = () => {
         mySnippets: [...communityStateValue.mySnippets, newSnippet],
         snippetsFetched: true,
       });
-    } catch (error) {
-      console.log("joinCommunity error", error);
+    } catch (error: any) {
+      console.log("joinCommunity error", error.message);
     }
     setLoading(false);
   };
@@ -82,8 +83,8 @@ const useCommunityData = () => {
         ),
         snippetsFetched: true,
       });
-    } catch (error) {
-      console.log("leaveCommunity error", error);
+    } catch (error: any) {
+      console.log("leaveCommunity error", error.message);
     }
     setLoading(false);
   };
@@ -105,7 +106,7 @@ const useCommunityData = () => {
     joinCommunity(communityData);
   };
 
-  const getMySnippets = async () => {
+  const getMySnippets = useCallback(async () => {
     setLoading(true);
     try {
       const snippetsDoc = await getDocs(
@@ -118,31 +119,34 @@ const useCommunityData = () => {
         mySnippets: snippets as CommunitySnippet[],
         snippetsFetched: true,
       });
-    } catch (err) {
-      console.log("getMySnippets error", err);
+    } catch (err: any) {
+      console.log("getMySnippets error", err.message);
     }
     setLoading(false);
-  };
+  }, [setCommunitySnippets, user?.uid]);
 
-  const getCommunityData = async (communityId: string) => {
-    console.log("GETTING COMMUNITY DATA");
+  const getCommunityData = useCallback(
+    async (communityId: string) => {
+      // console.log("GETTING COMMUNITY DATA");
 
-    try {
-      const communityDocRef = doc(
-        firestore,
-        "communities",
-        communityId as string
-      );
-      const communityDoc = await getDoc(communityDocRef);
+      try {
+        const communityDocRef = doc(
+          firestore,
+          "communities",
+          communityId as string
+        );
+        const communityDoc = await getDoc(communityDocRef);
 
-      setCurrentCommunity({
-        id: communityDoc.id,
-        ...communityDoc.data(),
-      } as Community);
-    } catch (error: any) {
-      console.log("getCommunityData error", error.message);
-    }
-  };
+        setCurrentCommunity({
+          id: communityDoc.id,
+          ...communityDoc.data(),
+        } as Community);
+      } catch (error: any) {
+        console.log("getCommunityData error", error.message);
+      }
+    },
+    [setCurrentCommunity]
+  );
 
   useEffect(() => {
     if (!user) {
@@ -150,18 +154,28 @@ const useCommunityData = () => {
       return;
     }
 
-    console.log("getMysnippets");
+    // console.log("getMysnippets");
     getMySnippets();
-  }, [user]);
+  }, [user, getMySnippets, setCommunitySnippets]);
 
   useEffect(() => {
     const { communityId } = router.query;
 
-    if (communityId && !communityStateValue.currentCommunity.id) {
-      getCommunityData(communityId as string);
+    if (communityId) {
+      if (!communityStateValue.currentCommunity.id) {
+        getCommunityData(communityId as string);
+        return;
+      }
       return;
+    } else {
+      setCurrentCommunity(defaultCommunity);
     }
-  }, [router.query, communityStateValue.currentCommunity]);
+  }, [
+    router.query,
+    communityStateValue.currentCommunity,
+    getCommunityData,
+    setCurrentCommunity,
+  ]);
 
   return {
     communityStateValue,

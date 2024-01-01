@@ -9,7 +9,7 @@ import { Post } from "@/store/postStore.js";
 import { doc, getDoc } from "firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 type Props = {};
@@ -21,21 +21,24 @@ const PostPage: NextPage<Props> = () => {
   const { postStateValue, setPostStateValue, onVote, onDeletePost } =
     usePosts();
 
-  const fetchPost = async (pid: string) => {
-    console.log("FETCHING POST");
+  const fetchPost = useCallback(
+    async (pid: string) => {
+      console.log("FETCHING POST");
 
-    try {
-      const postDocRef = doc(firestore, "posts", pid);
-      const postDoc = await getDoc(postDocRef);
+      try {
+        const postDocRef = doc(firestore, "posts", pid);
+        const postDoc = await getDoc(postDocRef);
 
-      setPostStateValue.setSelectedPost({
-        id: postDoc.id,
-        ...postDoc.data(),
-      } as Post);
-    } catch (error: any) {
-      console.log("fetchPost error", error.message);
-    }
-  };
+        setPostStateValue.setSelectedPost({
+          id: postDoc.id,
+          ...postDoc.data(),
+        } as Post);
+      } catch (error: any) {
+        console.log("fetchPost error", error.message);
+      }
+    },
+    [setPostStateValue]
+  );
 
   useEffect(() => {
     const { pid } = router.query;
@@ -43,7 +46,7 @@ const PostPage: NextPage<Props> = () => {
     if (pid && !postStateValue.selectedPost) {
       fetchPost(pid as string);
     }
-  }, [router.query, postStateValue.selectedPost]);
+  }, [router.query, postStateValue.selectedPost, fetchPost]);
 
   return (
     <PageContentLayout maxWidth="950px">

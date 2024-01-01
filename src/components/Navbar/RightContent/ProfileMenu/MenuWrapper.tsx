@@ -66,7 +66,7 @@ const MenuWrapper: React.FC<Props> = () => {
                   <Box boxSize="100%" rounded="full" bgColor="gray.200" />
                   <Box width="100%" position="absolute" bottom="0px">
                     <Image
-                      src="/images/profileicon_snoo.webp"
+                      src="/images/profileIcon_snoo.webp"
                       alt="profile icon"
                       width="100%"
                       display="block"

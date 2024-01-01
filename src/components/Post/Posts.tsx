@@ -24,9 +24,9 @@ const Posts: React.FC<Props> = ({ communityData }) => {
     onDeletePost,
   } = usePosts();
 
-  const getPosts = async () => {
-    setLoading(true);
+  const getPosts = useCallback(async () => {
     try {
+      setLoading(true);
       const postQuery = query(
         collection(firestore, "posts"),
         where("communityId", "==", communityData?.id),
@@ -43,14 +43,15 @@ const Posts: React.FC<Props> = ({ communityData }) => {
       //   console.log("posts", posts);
     } catch (err: any) {
       console.log("getPsts error", err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-  };
+  }, [communityData?.id]);
 
   useEffect(() => {
+    console.log("load posts");
     getPosts();
-  }, [communityData]);
+  }, [getPosts]);
 
   return (
     <>

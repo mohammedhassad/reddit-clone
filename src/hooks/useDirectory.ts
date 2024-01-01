@@ -36,7 +36,7 @@ const useDirectory = () => {
     }
 
     setSelectedMenuItem(defaultMenuItem);
-  }, [currentCommunity]);
+  }, [currentCommunity, setSelectedMenuItem]);
 
   return { directoryState, onSelectMenuItem, toggleMenuOpen };
 };

@@ -37,7 +37,7 @@ const HomePage: NextPage = () => {
   const { communityStateValue } = useCommunityData();
 
   const getNoUserHomePosts = async () => {
-    console.log("GETTING NO USER FEED");
+    // console.log("GETTING NO USER FEED");
     setLoading(true);
     try {
       const postQuery = query(
@@ -50,7 +50,7 @@ const HomePage: NextPage = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("NO USER FEED", posts);
+      // console.log("NO USER FEED", posts);
 
       setPostStateValue.setPosts(posts as Post[]);
     } catch (error: any) {
@@ -60,18 +60,18 @@ const HomePage: NextPage = () => {
   };
 
   const getUserHomePosts = async () => {
-    console.log("GETTING USER FEED");
+    // console.log("GETTING USER FEED");
     setLoading(true);
     try {
       // User has joined communities
       if (communityStateValue.mySnippets.length) {
-        console.log("GETTING POSTS IN USER COMMUNITIES");
+        // console.log("GETTING POSTS IN USER COMMUNITIES");
 
         const myCommunityIds = communityStateValue?.mySnippets?.map(
           (snippet) => snippet.communityId
         );
 
-        console.log(myCommunityIds);
+        // console.log(myCommunityIds);
         const postQuery = query(
           collection(firestore, "posts"),
           where("communityId", "in", myCommunityIds),

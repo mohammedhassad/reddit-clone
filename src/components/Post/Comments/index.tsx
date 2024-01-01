@@ -21,7 +21,7 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CommentItem, { Comment } from "./CommentItem";
 import CommentInput from "./Input";
 
@@ -133,7 +133,7 @@ const Comments: React.FC<CommentsProps> = ({
     setDeleteLoading("");
   };
 
-  const getPostComments = async () => {
+  const getPostComments = useCallback(async () => {
     try {
       const commentsQuery = query(
         collection(firestore, "comments"),
@@ -151,14 +151,14 @@ const Comments: React.FC<CommentsProps> = ({
       console.log("getPostComments error", error.message);
     }
     setCommentFetchLoading(false);
-  };
+  }, [selectedPost.id]);
 
   useEffect(() => {
     console.log("HERE IS SELECTED POST", selectedPost?.id);
     if (!selectedPost?.id) return;
 
     getPostComments();
-  }, [selectedPost]);
+  }, [selectedPost, getPostComments]);
 
   return (
     <Box bg="white" p={2} borderRadius="0px 0px 4px 4px">

@@ -22,7 +22,7 @@ const CommunityPage: NextPage<Props> = ({ communityData }) => {
 
   useEffect(() => {
     setCurrentCommunity(communityData);
-  }, [communityData]);
+  }, [communityData, setCurrentCommunity]);
 
   if (!communityData) {
     return <CommunityNotFound />;
