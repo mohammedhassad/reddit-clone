@@ -53,6 +53,7 @@ npm run dev
 - [Next.js](https://nextjs.org/) - A React framework for building web applications.
 - [Chakra UI](https://chakra-ui.com/) - A simple, modular, and accessible component library.
 - [Firebase](https://firebase.google.com/) - A platform for building web and mobile applications.
+- [Zustand](https://zustand-demo.pmnd.rs/) - A lightweight state management library for React.
 
 ## Contributing
 
